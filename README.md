@@ -1,7 +1,4 @@
-Written by danielee99@tistory.com
-mail danielee99@naver.com if you have any questions!
----------------------------------------
 HOW TO USE : 
-you need sshpass, arping to use this script
-
-after downloading, just change PASSWORD to your password! :)
+you need sshpass to use this script
+https://gist.github.com/arunoda/7790979
+just change PASSWORD to your password! :)
