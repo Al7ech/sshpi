@@ -1,9 +1,9 @@
-#written by danielee99@tistory.com
-#mail danielee99@naver.com if you have any questions!
+#mail al7ech@gmail.com if you have any questions!
 #!/bin/bash
-myip=$(sudo ifconfig  | grep -E 'inet.[0-9]' | grep -v '127.0.0.1' | awk '{print $2}')
-IFS=' ' read -r -a myip <<< "$myip"
-myip=${myip%.*}
+myip=$(ifconfig | grep "inet " | grep -v 127.0.0.1 | cut -d\  -f2)
+iprange=${myip%.*}
+pw="PASSWORD"
+
 arpcache=$(sudo arp -a | grep b8:27:eb )
 
 if [ -n "$arpcache" ]
@@ -11,16 +11,16 @@ if [ -n "$arpcache" ]
 		ip=$(echo $arpcache | cut -f2 -d"(" | cut -f1 -d")")
 		echo "RPi caught on arp cache"
 		echo "Connecting to pi@${ip}..."
-		sshpass -p "PASSWORD" ssh -o StrictHostKeyChecking=no pi@$ip
+		sshpass -p $pw ssh -o StrictHostKeyChecking=no pi@$ip
 		exit
 else
-	printf "RPi not found on arp cache...\narping local network...\n"
+	printf "RPi not found on arp cache...\nScanning local network...\n"
 	fi
 for i in {1..254}
-do	
-	sudo arping -c1 192.168.25.${i} &> /dev/null &
-	sleep 0.05
-	echo -en "\rarp-scan $myip.$i"
+do
+	ping -c 1 $iprange.$i > /dev/null &
+	sleep 0.01
+	echo -en "\rScaning ... $iprange.$i"
 
 done
 
@@ -34,20 +34,19 @@ array[7]='/'
 array[8]='|'
 for name in ${array[@]}
 do
-	echo -en "\rWaiting for response...$name"
+	echo -en "\rWaiting for response ... $name"
 	sleep 0.5
 done
 
-echo -en "\b\n"
+echo -en "\r                       \r"
 
 arpcache=$(sudo arp -a | grep b8:27:eb )
 if [ -n "$arpcache" ]
 	then
 		ip=$(echo $arpcache | cut -f2 -d"(" | cut -f1 -d")")
 		echo "Connecting to pi@${ip}..."
-		sshpass -p "PASSWORD" ssh -o StrictHostKeyChecking=no pi@$ip
+		sshpass -p $pw ssh -o StrictHostKeyChecking=no pi@$ip
 		exit
 	fi
-echo""
-printf "No RPi devices found!\nQuiting...\n"
+printf "\r                      \rNo RPi devices found!\nQuiting...\n"
 exit
